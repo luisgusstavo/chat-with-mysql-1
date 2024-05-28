@@ -71,7 +71,8 @@ def get_response(user_query: str, db: SQLDatabase, chat_history: list):
   chain = (
     RunnablePassthrough.assign(query=sql_chain).assign(
       schema=lambda _: db.get_table_info(),
-      response=lambda vars: db.run(vars["query"]),
+      response=lambda vars: db.run(vars["query"].replace("\\", "")),#this solves the problem with backslash
+
     )
     | prompt
     | llm
